@@ -1,1 +1,4 @@
 django
+django-types
+python-decouple
+dj_database_url
