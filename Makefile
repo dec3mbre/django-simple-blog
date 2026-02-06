@@ -8,7 +8,7 @@ migrate:
 	python manage.py migrate
 
 install:
-	pip install -r requirements/dev.txt
+	pip install -r requirements.txt
 
 test:
 	pytest
