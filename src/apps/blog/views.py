@@ -1,11 +1,14 @@
 import math
 
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator
 from django.views.decorators.http import require_POST
 
 from apps.core.models import Subscriber
+from .forms import ArticleForm
 from .models import Article, Category
 
 
@@ -102,3 +105,53 @@ def subscribe(request):
     if created:
         return JsonResponse({'ok': True, 'message': 'Вы успешно подписались!'})
     return JsonResponse({'ok': True, 'message': 'Вы уже подписаны.'})
+
+@login_required
+def article_create(request):
+    """Создание новой статьи."""
+    if request.method == 'POST':
+        form = ArticleForm(request.POST, request.FILES)
+        if form.is_valid():
+            article = form.save(commit=False)
+            article.author = request.user
+            article.slug = form.generate_unique_slug()
+            # Кнопка "Опубликовать" передаёт status=published, иначе — черновик
+            article.status = request.POST.get('status', Article.Status.DRAFT)
+            article.save()
+            if article.status == Article.Status.PUBLISHED:
+                return redirect(article.get_absolute_url())
+            return redirect('accounts:profile')
+    else:
+        form = ArticleForm()
+
+    return render(request, 'blog/editor.html', {
+        'form': form,
+        'editing': False,
+    })
+
+
+@login_required
+def article_edit(request, slug):
+    """Редактирование существующей статьи (только автор)."""
+    article = get_object_or_404(Article, slug=slug, author=request.user)
+
+    if request.method == 'POST':
+        form = ArticleForm(request.POST, request.FILES, instance=article)
+        if form.is_valid():
+            article = form.save(commit=False)
+            article.status = request.POST.get('status', article.status)
+            # Обновляем slug только если заголовок изменился
+            if 'title' in form.changed_data:
+                article.slug = form.generate_unique_slug()
+            article.save()
+            if article.status == Article.Status.PUBLISHED:
+                return redirect(article.get_absolute_url())
+            return redirect('accounts:profile')
+    else:
+        form = ArticleForm(instance=article)
+
+    return render(request, 'blog/editor.html', {
+        'form': form,
+        'article': article,
+        'editing': True,
+    })

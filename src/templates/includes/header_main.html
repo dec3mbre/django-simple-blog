@@ -23,7 +23,7 @@
         <!-- Desktop Actions -->
         <div class="hidden sm:flex items-center gap-4">
             {% if user.is_authenticated %}
-            <a href="{% url 'accounts:profile' %}"
+            <a href="{% url 'blog:article_create' %}"
                 class="mono rounded-lg border border-emerald-200/30 bg-emerald-200/10 px-4 py-2 text-xs uppercase tracking-[0.3em] text-emerald-100 shadow-[0_4px_16px_rgba(119,242,193,0.10)] hover:border-emerald-200/50 hover:bg-emerald-200/15 transition-all">
                 Опубликовать
             </a>
@@ -42,7 +42,7 @@
         <!-- Mobile Actions -->
         <div class="flex sm:hidden items-center gap-3">
             {% if user.is_authenticated %}
-            <a href="{% url 'accounts:profile' %}"
+            <a href="{% url 'blog:article_create' %}"
                 class="w-9 h-9 rounded-lg border border-emerald-200/30 bg-emerald-200/10 flex items-center justify-center text-emerald-100 hover:bg-emerald-200/15 transition-all">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
