@@ -1,6 +1,7 @@
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
+from django.views.decorators.http import require_POST
 
 from apps.blog.models import Article
 from apps.core.models import UserProfile
@@ -110,6 +111,7 @@ def profile_view(request):
 
 
 @login_required
+@require_POST
 def logout_view(request):
     """Выход из аккаунта."""
     auth.logout(request)

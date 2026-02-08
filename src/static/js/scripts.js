@@ -44,56 +44,45 @@ function initMobileMenu() {
 }
 
 /**
- * Article Search and Filtering
- * Handles search input and tag matching on articles.html
+ * Article Search (client-side instant filtering for title search input)
+ * Handles search input on articles page.
  */
 function initArticleSearch() {
     const searchInput = document.getElementById('search-input');
-    const tagFilters = document.querySelectorAll('.tag-filter');
+    if (!searchInput) return;
+
+    // Client-side search is handled via form submit to server.
+    // This provides real-time filtering as a progressive enhancement.
     const articlesGrid = document.getElementById('articles-grid');
     const articles = document.querySelectorAll('.article-card');
     const resultsCount = document.getElementById('results-count');
     const emptyState = document.getElementById('empty-state');
 
-    if (!searchInput || !articlesGrid) return;
+    if (!articlesGrid || articles.length === 0) return;
 
-    let activeTag = 'all';
-
-    function filterArticles() {
+    searchInput.addEventListener('input', () => {
         const searchTerm = searchInput.value.toLowerCase().trim();
+        if (!searchTerm) {
+            // Show all — let server filtering handle it
+            articles.forEach(a => a.classList.remove('hidden'));
+            if (resultsCount) resultsCount.textContent = articles.length;
+            if (emptyState) emptyState.classList.add('hidden');
+            if (articlesGrid) articlesGrid.classList.remove('hidden');
+            return;
+        }
+
         let visibleCount = 0;
-
         articles.forEach(article => {
-            const title = article.dataset.title ? article.dataset.title.toLowerCase() : '';
-            const desc = article.dataset.desc ? article.dataset.desc.toLowerCase() : '';
-            const tags = article.dataset.tags ? article.dataset.tags.split(',') : [];
-
-            const matchesSearch = !searchTerm || title.includes(searchTerm) || desc.includes(searchTerm);
-            const matchesTag = activeTag === 'all' || tags.includes(activeTag);
-
-            if (matchesSearch && matchesTag) {
-                article.classList.remove('hidden');
-                visibleCount++;
-            } else {
-                article.classList.add('hidden');
-            }
+            const title = (article.dataset.title || '').toLowerCase();
+            const desc = (article.dataset.desc || '').toLowerCase();
+            const matches = title.includes(searchTerm) || desc.includes(searchTerm);
+            article.classList.toggle('hidden', !matches);
+            if (matches) visibleCount++;
         });
 
         if (resultsCount) resultsCount.textContent = visibleCount;
-
         if (emptyState) emptyState.classList.toggle('hidden', visibleCount > 0);
         if (articlesGrid) articlesGrid.classList.toggle('hidden', visibleCount === 0);
-    }
-
-    searchInput.addEventListener('input', filterArticles);
-
-    tagFilters.forEach(filter => {
-        filter.addEventListener('click', () => {
-            tagFilters.forEach(f => f.classList.remove('active'));
-            filter.classList.add('active');
-            activeTag = filter.dataset.tag;
-            filterArticles();
-        });
     });
 }
 

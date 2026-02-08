@@ -25,7 +25,7 @@
                         {{ featured.title }}
                     </h1>
                     <p class="mt-4 text-base text-white/70">
-                        {{ featured.content|truncatewords:20 }}
+                        {{ featured.description|default:featured.content|truncatewords:20 }}
                     </p>
                     <div class="mt-5 flex flex-wrap items-center gap-3">
                         {% if featured.category %}
@@ -53,7 +53,7 @@
                     {{ featured.title }}
                 </h1>
                 <p class="mt-5 max-w-2xl text-base text-white/70 sm:text-lg">
-                    {{ featured.content|truncatewords:25 }}
+                    {{ featured.description|default:featured.content|truncatewords:25 }}
                 </p>
                 <div class="mt-6 flex flex-wrap items-center gap-3">
                     {% if featured.category %}

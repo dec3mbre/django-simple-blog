@@ -1,11 +1,11 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static markdown_extras %}
 
 {% block title %}{{ article.title }} / Dev Notes{% endblock %}
 {% block meta %}
-<meta name="description" content="{{ article.content|truncatewords:25 }}" />
+<meta name="description" content="{{ article.description|default:article.content|truncatewords:25 }}" />
 <meta property="og:title" content="{{ article.title }}" />
-<meta property="og:description" content="{{ article.content|truncatewords:25 }}" />
+<meta property="og:description" content="{{ article.description|default:article.content|truncatewords:25 }}" />
 <meta property="og:type" content="article" />
 {% if article.image %}<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ article.image.url }}" />{% endif %}
 <meta name="twitter:card" content="summary_large_image" />
@@ -45,19 +45,27 @@
 
     <!-- Content -->
     <div class="prose mt-10 mx-auto" style="max-width: 65ch;">
-        {{ article.content|linebreaks }}
+        {{ article.content|markdown }}
     </div>
 
     <!-- Author -->
     <div class="mt-12 pt-8 border-t border-white/10">
-        <div class="flex items-center gap-4">
-            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-400 to-blue-500 flex items-center justify-center text-white font-medium text-lg">
-                {{ article.author.first_name|default:article.author.username|truncatechars:1|upper }}
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-400 to-blue-500 flex items-center justify-center text-white font-medium text-lg">
+                    {{ article.author.first_name|default:article.author.username|truncatechars:1|upper }}
+                </div>
+                <div>
+                    <p class="font-medium">Автор: {{ article.author.get_full_name|default:article.author.username }}</p>
+                    <p class="text-sm text-white/50">Автор dev/blog</p>
+                </div>
             </div>
-            <div>
-                <p class="font-medium">Автор: {{ article.author.get_full_name|default:article.author.username }}</p>
-                <p class="text-sm text-white/50">Автор dev/blog</p>
-            </div>
+            {% if user == article.author %}
+            <a href="{% url 'blog:article_edit' article.slug %}"
+                class="mono rounded-lg border border-white/20 bg-white/10 px-4 py-2 text-xs uppercase tracking-[0.2em] text-white/70 hover:border-white/40 hover:bg-white/15 transition-all">
+                Редактировать
+            </a>
+            {% endif %}
         </div>
     </div>
 </article>

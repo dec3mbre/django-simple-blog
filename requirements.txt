@@ -2,3 +2,8 @@ django
 django-types
 python-decouple
 dj_database_url
+Pillow
+unidecode
+markdown
+gunicorn
+whitenoise

@@ -2,6 +2,7 @@ import math
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator
@@ -51,7 +52,11 @@ def article_list(request):
     ).order_by('-created_at')
 
     if query:
-        articles = articles.filter(title__icontains=query)
+        articles = articles.filter(
+            Q(title__icontains=query)
+            | Q(description__icontains=query)
+            | Q(content__icontains=query)
+        )
 
     if category_slug:
         articles = articles.filter(category__slug=category_slug)
@@ -77,9 +82,14 @@ def article_list(request):
 
 def article_detail(request, slug):
     """Страница отдельной статьи с похожими постами."""
-    article = get_object_or_404(
-        Article, slug=slug, status=Article.Status.PUBLISHED
-    )
+    article = get_object_or_404(Article, slug=slug)
+
+    # Черновики видны только автору
+    if article.status != Article.Status.PUBLISHED:
+        if not request.user.is_authenticated or request.user != article.author:
+            from django.http import Http404
+            raise Http404
+
     article.reading_time = _reading_time(article.content)
 
     # Похожие статьи: из той же категории, кроме текущей
@@ -155,3 +165,13 @@ def article_edit(request, slug):
         'article': article,
         'editing': True,
     })
+
+
+@login_required
+@require_POST
+def article_delete(request, slug):
+    """Удаление статьи (только автор, POST)."""
+    article = get_object_or_404(Article, slug=slug, author=request.user)
+    article.delete()
+    messages.success(request, 'Статья удалена.')
+    return redirect('accounts:profile')

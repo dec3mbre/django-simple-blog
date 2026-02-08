@@ -9,5 +9,6 @@ urlpatterns = [
     path("article/<slug:slug>/", views.article_detail, name="article_detail"),
     path("editor/", views.article_create, name="article_create"),
     path("editor/<slug:slug>/", views.article_edit, name="article_edit"),
+    path("article/<slug:slug>/delete/", views.article_delete, name="article_delete"),
     path("subscribe/", views.subscribe, name="subscribe"),
 ]

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Ошибка сервера / Dev Notes{% endblock %}
+
+{% block grid_overlay %}{% endblock %}
+
+{% block content %}
+<section class="mx-auto w-full max-w-3xl px-6 py-20 text-center">
+    <p class="mono text-6xl font-semibold text-white/20">500</p>
+    <h1 class="mt-6 text-3xl font-semibold">Что-то пошло не так</h1>
+    <p class="mt-4 text-white/60">Произошла внутренняя ошибка сервера. Мы уже работаем над решением.</p>
+    <a href="/"
+        class="mt-8 inline-block mono rounded-lg border border-white/20 bg-white/10 px-6 py-3 text-xs uppercase tracking-[0.3em] text-white/70 hover:border-white/40 hover:bg-white/15 transition-all">
+        На главную
+    </a>
+</section>
+{% endblock %}
