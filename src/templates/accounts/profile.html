@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Профиль / Dev Notes{% endblock %}
+
+{% block grid_overlay %}{% endblock %}
+
+{% block header %}
+{% include "includes/header_back.html" with back_url="/" back_text="На главную" right_text="Выйти" right_url="#" %}
+{% endblock %}
+
+{% block content %}
+<section class="mx-auto w-full max-w-4xl px-6 pb-16">
+    <!-- Profile Header -->
+    <div class="fade-up flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left sm:gap-8">
+        <div class="relative">
+            <div
+                class="w-24 h-24 rounded-2xl bg-gradient-to-br from-emerald-400 to-blue-500 flex items-center justify-center text-3xl font-semibold text-white">
+                {{ user.first_name|default:user.username|truncatechars:1|upper }}
+            </div>
+        </div>
+        <div class="mt-4 sm:mt-0">
+            <h1 class="text-3xl font-semibold">{{ user.get_full_name|default:user.username }}</h1>
+            <p class="mt-1 text-white/50">{{ user.email }}</p>
+            <p class="mt-3 text-white/70 max-w-md">Разработчик и автор.</p>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="fade-up mt-10 grid gap-4 grid-cols-2 sm:grid-cols-4" style="animation-delay: 0.1s;">
+        <div class="min-w-[110px] flex-1 rounded-xl border border-white/10 bg-white/5 p-3 text-center sm:min-w-0 sm:p-4">
+            <p class="mono text-2xl font-semibold text-white">{{ published_count|default:"0" }}</p>
+            <p class="mt-1 mono text-[10px] uppercase tracking-[0.2em] text-white/50">Постов</p>
+        </div>
+        <div class="min-w-[110px] flex-1 rounded-xl border border-white/10 bg-white/5 p-3 text-center sm:min-w-0 sm:p-4">
+            <p class="mono text-2xl font-semibold text-emerald-300">—</p>
+            <p class="mt-1 mono text-[10px] uppercase tracking-[0.2em] text-white/50">Подписчиков</p>
+        </div>
+        <div class="min-w-[110px] flex-1 rounded-xl border border-white/10 bg-white/5 p-3 text-center sm:min-w-0 sm:p-4">
+            <p class="mono text-2xl font-semibold text-white">—</p>
+            <p class="mt-1 mono text-[10px] uppercase tracking-[0.2em] text-white/50">Просмотров</p>
+        </div>
+        <div class="min-w-[110px] flex-1 rounded-xl border border-white/10 bg-white/5 p-3 text-center sm:min-w-0 sm:p-4">
+            <p class="mono text-2xl font-semibold text-white">{{ user.date_joined|date:"M y" }}</p>
+            <p class="mt-1 mono text-[10px] uppercase tracking-[0.2em] text-white/50">Участник с</p>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="fade-up mt-10 border-b border-white/10 overflow-x-auto" style="animation-delay: 0.15s;">
+        <nav class="flex gap-6 min-w-max" id="profile-tabs">
+            <button data-tab="posts"
+                class="tab-btn mono text-sm uppercase tracking-[0.2em] text-white pb-4 border-b-2 border-emerald-400 whitespace-nowrap">
+                Мои посты</button>
+            <button data-tab="drafts"
+                class="tab-btn mono text-sm uppercase tracking-[0.2em] text-white/50 pb-4 border-b-2 border-transparent hover:text-white/70 transition-colors whitespace-nowrap">
+                Черновики</button>
+            <button data-tab="settings"
+                class="tab-btn mono text-sm uppercase tracking-[0.2em] text-white/50 pb-4 border-b-2 border-transparent hover:text-white/70 transition-colors whitespace-nowrap">
+                Настройки</button>
+        </nav>
+    </div>
+
+    <!-- Tab Content: My Posts -->
+    <div class="tab-content" id="tab-posts">
+        <div class="fade-up mt-8 space-y-4" style="animation-delay: 0.2s;">
+            {% for article in published_articles %}
+            <article
+                class="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 p-5 hover:border-white/20 hover:bg-white/[0.07] transition-all">
+                <div class="flex-1">
+                    <div class="flex items-center gap-3 text-xs text-white/50">
+                        <span class="mono uppercase tracking-[0.2em]">{{ article.created_at|date:"M d" }}</span>
+                        <span class="h-1 w-1 rounded-full bg-white/30"></span>
+                        <span
+                            class="rounded-full bg-emerald-400/20 text-emerald-300 px-2 py-0.5 mono text-[10px] uppercase tracking-wider">Опубликовано</span>
+                    </div>
+                    <a href="{% url 'blog:article_detail' article.slug %}" class="mt-2 font-medium block hover:text-emerald-200 transition-colors">{{ article.title }}</a>
+                </div>
+            </article>
+            {% empty %}
+            <div class="text-center py-8">
+                <p class="mono text-sm uppercase tracking-[0.3em] text-white/40">Нет опубликованных статей</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- New Post Button -->
+        <div class="fade-up mt-8" style="animation-delay: 0.25s;">
+            <a href="#"
+                class="block w-full mono rounded-xl border border-dashed border-white/20 bg-white/5 py-4 text-sm uppercase tracking-[0.2em] text-white/50 hover:border-emerald-300/30 hover:text-emerald-300 hover:bg-emerald-300/5 transition-all text-center">
+                + Новый пост
+            </a>
+        </div>
+    </div>
+
+    <!-- Tab Content: Drafts -->
+    <div class="tab-content hidden" id="tab-drafts">
+        <div class="mt-8 space-y-4">
+            {% for article in draft_articles %}
+            <article
+                class="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 p-5 hover:border-white/20 hover:bg-white/[0.07] transition-all">
+                <div class="flex-1">
+                    <div class="flex items-center gap-3 text-xs text-white/50">
+                        <span class="mono uppercase tracking-[0.2em]">Черновик</span>
+                        <span class="h-1 w-1 rounded-full bg-white/30"></span>
+                        <span class="mono uppercase tracking-[0.2em]">{{ article.updated_at|timesince }} назад</span>
+                    </div>
+                    <h3 class="mt-2 font-medium">{{ article.title }}</h3>
+                </div>
+            </article>
+            {% empty %}
+            <div class="text-center py-8">
+                <p class="mono text-sm uppercase tracking-[0.3em] text-white/40">Нет черновиков</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Tab Content: Settings -->
+    <div class="tab-content hidden" id="tab-settings">
+        <form class="mt-8 space-y-8" method="post" action="#">
+            {% csrf_token %}
+            <!-- Basic Info -->
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-6">
+                <h3 class="text-lg font-semibold">Основная информация</h3>
+                <div class="mt-6 space-y-5">
+                    <div>
+                        <label class="block mono text-xs uppercase tracking-[0.2em] text-white/50 mb-2">Имя</label>
+                        <input type="text" name="first_name" value="{{ user.first_name }}"
+                            class="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-emerald-300/50 focus:outline-none transition-colors" />
+                    </div>
+                    <div>
+                        <label class="block mono text-xs uppercase tracking-[0.2em] text-white/50 mb-2">Био</label>
+                        <textarea rows="3" name="bio"
+                            class="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-emerald-300/50 focus:outline-none transition-colors resize-none"
+                            placeholder="Расскажите о себе"></textarea>
+                    </div>
+                    <div>
+                        <label class="block mono text-xs uppercase tracking-[0.2em] text-white/50 mb-2">Email</label>
+                        <input type="email" name="email" value="{{ user.email }}"
+                            class="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-emerald-300/50 focus:outline-none transition-colors" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Social Links -->
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-6">
+                <h3 class="text-lg font-semibold">Социальные сети</h3>
+                <div class="mt-6 space-y-5">
+                    <div>
+                        <label class="block mono text-xs uppercase tracking-[0.2em] text-white/50 mb-2">GitHub</label>
+                        <div class="flex">
+                            <span
+                                class="flex items-center rounded-l-lg border border-r-0 border-white/10 bg-white/[0.03] px-4 text-white/40">github.com/</span>
+                            <input type="text" name="github" placeholder="username"
+                                class="flex-1 rounded-r-lg border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:border-emerald-300/50 focus:outline-none transition-colors" />
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block mono text-xs uppercase tracking-[0.2em] text-white/50 mb-2">Twitter</label>
+                        <div class="flex">
+                            <span
+                                class="flex items-center rounded-l-lg border border-r-0 border-white/10 bg-white/[0.03] px-4 text-white/40">twitter.com/</span>
+                            <input type="text" name="twitter" placeholder="username"
+                                class="flex-1 rounded-r-lg border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:border-emerald-300/50 focus:outline-none transition-colors" />
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block mono text-xs uppercase tracking-[0.2em] text-white/50 mb-2">Сайт</label>
+                        <input type="url" name="website" placeholder="https://yoursite.com"
+                            class="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:border-emerald-300/50 focus:outline-none transition-colors" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Password -->
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-6">
+                <h3 class="text-lg font-semibold">Изменить пароль</h3>
+                <div class="mt-6 space-y-5">
+                    <div>
+                        <label class="block mono text-xs uppercase tracking-[0.2em] text-white/50 mb-2">Текущий пароль</label>
+                        <input type="password" name="old_password" placeholder="••••••••"
+                            class="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:border-emerald-300/50 focus:outline-none transition-colors" />
+                    </div>
+                    <div>
+                        <label class="block mono text-xs uppercase tracking-[0.2em] text-white/50 mb-2">Новый пароль</label>
+                        <input type="password" name="new_password" placeholder="Минимум 8 символов"
+                            class="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:border-emerald-300/50 focus:outline-none transition-colors" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Save Button -->
+            <div class="flex items-center justify-between">
+                <p class="text-sm text-white/40">Изменения сохраняются автоматически</p>
+                <button type="submit"
+                    class="mono rounded-lg border border-emerald-200/30 bg-emerald-200/10 px-6 py-3 text-sm uppercase tracking-[0.2em] text-emerald-100 hover:border-emerald-200/50 hover:bg-emerald-200/15 transition-all shadow-[0_4px_16px_rgba(119,242,193,0.12)]">
+                    Сохранить
+                </button>
+            </div>
+
+            <!-- Danger Zone -->
+            <div class="rounded-2xl border border-red-500/20 bg-red-500/5 p-6">
+                <h3 class="text-lg font-semibold text-red-300">Опасная зона</h3>
+                <p class="mt-2 text-sm text-white/50">Удаление аккаунта необратимо. Все ваши статьи будут удалены.</p>
+                <button type="button"
+                    class="mt-4 mono rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-2 text-xs uppercase tracking-[0.2em] text-red-300 hover:border-red-500/50 hover:bg-red-500/20 transition-all">
+                    Удалить аккаунт
+                </button>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

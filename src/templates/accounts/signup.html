@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Регистрация / Dev Notes{% endblock %}
+{% block body_class %}page-auth{% endblock %}
+
+{% block body %}
+<div class="flex items-center justify-center min-h-screen px-4 py-8">
+    <div class="w-full max-w-md">
+        <!-- Logo -->
+        <a href="{% url 'blog:index' %}" class="flex items-center justify-center gap-2 mb-8 fade-up">
+            <span
+                class="mono rounded-full border border-white/20 px-3 py-1 text-xs uppercase tracking-[0.25em]">dev/blog</span>
+        </a>
+
+        <!-- Card -->
+        <div class="fade-up rounded-2xl border border-white/10 bg-white/5 p-5 md:p-8 backdrop-blur-sm"
+            style="animation-delay: 0.1s;">
+            <h1 class="text-2xl font-semibold text-center">Создать аккаунт</h1>
+            <p class="mt-2 text-sm text-white/60 text-center">Присоединяйтесь к сообществу</p>
+
+            {% if form.errors %}
+            <div class="mt-4 rounded-lg border border-red-500/30 bg-red-500/10 p-4">
+                <p class="text-sm text-red-300">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            {{ error }}<br>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        {{ error }}<br>
+                    {% endfor %}
+                </p>
+            </div>
+            {% endif %}
+
+            <form class="mt-8 space-y-5" method="post" action="#">
+                {% csrf_token %}
+                <div>
+                    <label class="block mono text-xs uppercase tracking-[0.2em] text-white/50 mb-2">Имя</label>
+                    <input type="text" name="first_name" required placeholder="Ваше имя"
+                        class="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:border-emerald-300/50 focus:outline-none transition-colors" />
+                </div>
+                <div>
+                    <label class="block mono text-xs uppercase tracking-[0.2em] text-white/50 mb-2">Имя пользователя</label>
+                    <input type="text" name="username" required placeholder="username"
+                        class="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:border-emerald-300/50 focus:outline-none transition-colors" />
+                </div>
+                <div>
+                    <label class="block mono text-xs uppercase tracking-[0.2em] text-white/50 mb-2">Email</label>
+                    <input type="email" name="email" required placeholder="you@example.com"
+                        class="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:border-emerald-300/50 focus:outline-none transition-colors" />
+                </div>
+                <div>
+                    <label class="block mono text-xs uppercase tracking-[0.2em] text-white/50 mb-2">Пароль</label>
+                    <input type="password" name="password1" required placeholder="Минимум 8 символов"
+                        class="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:border-emerald-300/50 focus:outline-none transition-colors" />
+                </div>
+                <div>
+                    <label class="flex items-start gap-3 text-sm text-white/60 cursor-pointer">
+                        <input type="checkbox" name="terms" required
+                            class="w-4 h-4 mt-0.5 rounded border-white/20 bg-white/5 accent-emerald-400" />
+                        <span>Я согласен с <a href="#" class="text-emerald-300 hover:text-emerald-200">условиями
+                                использования</a> и <a href="#"
+                                class="text-emerald-300 hover:text-emerald-200">политикой конфиденциальности</a></span>
+                    </label>
+                </div>
+                <button type="submit"
+                    class="w-full mono rounded-lg border border-emerald-200/30 bg-emerald-200/10 px-5 py-3.5 text-sm uppercase tracking-[0.2em] text-emerald-100 hover:border-emerald-200/50 hover:bg-emerald-200/15 transition-all shadow-[0_8px_24px_rgba(119,242,193,0.15)]">
+                    Зарегистрироваться
+                </button>
+            </form>
+
+            <!-- Login link -->
+            <p class="mt-8 text-center text-sm text-white/50">
+                Уже есть аккаунт? <a href="#"
+                    class="text-emerald-300 hover:text-emerald-200 transition-colors">Войти</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

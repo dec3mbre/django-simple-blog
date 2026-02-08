@@ -1,0 +1,31 @@
+{% comment %}
+Back navigation header.
+Context variables:
+  - back_url: URL для кнопки "Назад" (default: /)
+  - back_text: Текст кнопки "Назад" (default: "Назад")
+  - right_text: Текст правой кнопки (optional)
+  - right_url: URL правой кнопки (optional)
+  - max_width: "4xl" или "5xl" (default: "4xl")
+{% endcomment %}
+<header class="relative z-10">
+    <div class="mx-auto flex w-full max-w-{{ max_width|default:'4xl' }} items-center justify-between px-4 py-6 sm:px-6 sm:py-8">
+        <a href="{{ back_url|default:'/' }}" class="flex items-center gap-3 text-white/70 hover:text-white transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            <span class="mono text-xs uppercase tracking-[0.25em]">{{ back_text|default:"Назад" }}</span>
+        </a>
+        {% if right_text %}
+        <div class="flex items-center gap-4">
+            {% if right_url %}
+            <a href="{{ right_url }}"
+                class="mono text-xs uppercase tracking-[0.25em] text-white/50 hover:text-white transition-colors">{{ right_text }}</a>
+            {% else %}
+            <button data-share
+                class="mono text-xs uppercase tracking-[0.25em] text-white/50 hover:text-white transition-colors">{{ right_text }}</button>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</header>

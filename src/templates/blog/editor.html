@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Новая статья / Dev Notes{% endblock %}
+
+{% block grid_overlay %}{% endblock %}
+
+{% block body %}
+<!-- Header -->
+<header class="sticky top-0 z-20 backdrop-blur-md bg-[#0f1115]/80 border-b border-white/10">
+    <div class="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-4">
+        <div class="flex items-center gap-4">
+            <a href="/" class="flex items-center gap-2 text-white/50 hover:text-white transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </a>
+            <span class="h-6 w-px bg-white/20"></span>
+            <span class="mono text-xs uppercase tracking-[0.2em] text-white/50">Черновик</span>
+            <span class="mono text-xs text-white/30">Сохранено</span>
+        </div>
+        <div class="flex items-center gap-3">
+            <button
+                class="mono rounded-lg border border-white/20 bg-white/10 px-4 py-2 text-xs uppercase tracking-[0.2em] text-white/70 hover:border-white/40 hover:bg-white/15 transition-all">
+                Превью
+            </button>
+            <button
+                class="mono rounded-lg border border-emerald-200/30 bg-emerald-200/10 px-5 py-2 text-xs uppercase tracking-[0.2em] text-emerald-100 hover:border-emerald-200/50 hover:bg-emerald-200/15 transition-all shadow-[0_4px_16px_rgba(119,242,193,0.12)]">
+                Опубликовать
+            </button>
+        </div>
+    </div>
+</header>
+
+<main class="relative z-10">
+    <div class="mx-auto w-full max-w-3xl px-6 py-10">
+        <form method="post" action="#">
+            {% csrf_token %}
+            <!-- Title -->
+            <div class="fade-up">
+                <input type="text" name="title" placeholder="Заголовок статьи"
+                    class="w-full bg-transparent text-4xl font-semibold placeholder-white/30 border-none focus:ring-0 focus:outline-none" />
+            </div>
+
+            <!-- Description -->
+            <div class="fade-up mt-4" style="animation-delay: 0.05s;">
+                <input type="text" name="description" placeholder="Краткое описание (опционально)"
+                    class="w-full bg-transparent text-lg text-white/70 placeholder-white/30 border-none focus:ring-0 focus:outline-none" />
+            </div>
+
+            <!-- Meta -->
+            <div class="fade-up mt-8 flex flex-wrap items-center gap-4" style="animation-delay: 0.1s;">
+                <!-- Tags -->
+                <div class="flex items-center gap-2">
+                    <span class="mono text-xs uppercase tracking-[0.2em] text-white/40">Теги:</span>
+                    <div class="flex flex-wrap gap-2" id="tags-container">
+                    </div>
+                    <button type="button"
+                        class="flex items-center gap-1 rounded-full border border-dashed border-white/20 px-3 py-1 text-xs text-white/40 hover:border-white/40 hover:text-white/60 transition-all">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Добавить
+                    </button>
+                </div>
+
+                <span class="h-4 w-px bg-white/10"></span>
+
+                <!-- Read time -->
+                <div class="flex items-center gap-2 text-white/40">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span class="mono text-xs" id="read-time">~0 мин чтения</span>
+                </div>
+            </div>
+
+            <!-- Divider -->
+            <div class="mt-8 h-px bg-white/10"></div>
+
+            <!-- Toolbar -->
+            <div class="fade-up sticky top-[73px] z-10 mt-6 flex items-center gap-1 rounded-xl border border-white/10 bg-white/5 p-2 backdrop-blur-sm"
+                style="animation-delay: 0.15s;">
+                <button type="button" class="p-2 rounded-lg text-white/50 hover:text-white hover:bg-white/10 transition-all"
+                    title="Жирный">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
+                        <path d="M6 4h8a4 4 0 014 4 4 4 0 01-4 4H6z" />
+                        <path d="M6 12h9a4 4 0 014 4 4 4 0 01-4 4H6z" />
+                    </svg>
+                </button>
+                <button type="button" class="p-2 rounded-lg text-white/50 hover:text-white hover:bg-white/10 transition-all"
+                    title="Курсив">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 4h4m-2 0v16m-4 0h8" />
+                    </svg>
+                </button>
+                <span class="mx-1 h-5 w-px bg-white/10"></span>
+                <button type="button" class="p-2 rounded-lg text-white/50 hover:text-white hover:bg-white/10 transition-all"
+                    title="Заголовок">
+                    <span class="mono text-xs font-bold">H</span>
+                </button>
+                <button type="button" class="p-2 rounded-lg text-white/50 hover:text-white hover:bg-white/10 transition-all"
+                    title="Цитата">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M4.583 17.321C3.553 16.227 3 15 3 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179zm10 0C13.553 16.227 13 15 13 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179z" />
+                    </svg>
+                </button>
+                <span class="mx-1 h-5 w-px bg-white/10"></span>
+                <button type="button" class="p-2 rounded-lg text-white/50 hover:text-white hover:bg-white/10 transition-all"
+                    title="Код">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                    </svg>
+                </button>
+                <button type="button" class="p-2 rounded-lg text-white/50 hover:text-white hover:bg-white/10 transition-all"
+                    title="Блок кода">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 7v10c0 2 1 3 3 3h10c2 0 3-1 3-3V7c0-2-1-3-3-3H7c-2 0-3 1-3 3z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6" />
+                    </svg>
+                </button>
+                <span class="mx-1 h-5 w-px bg-white/10"></span>
+                <button type="button" class="p-2 rounded-lg text-white/50 hover:text-white hover:bg-white/10 transition-all"
+                    title="Список">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+                <button type="button" class="p-2 rounded-lg text-white/50 hover:text-white hover:bg-white/10 transition-all"
+                    title="Ссылка">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                    </svg>
+                </button>
+                <span class="mx-1 h-5 w-px bg-white/10"></span>
+                <button type="button" class="p-2 rounded-lg text-white/50 hover:text-white hover:bg-white/10 transition-all"
+                    title="Изображение">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Editor Content -->
+            <div class="fade-up mt-6" style="animation-delay: 0.2s;">
+                <textarea name="content" id="editor"
+                    class="editor-content mono w-full bg-transparent text-base text-white/90 placeholder-white/30 resize-none border-none focus:ring-0 focus:outline-none"
+                    placeholder="Начните писать...
+
+Поддерживается Markdown:
+# Заголовок
+**жирный** и *курсив*
+- списки
+> цитаты
+`код` и блоки кода
+
+Вставляйте изображения перетаскиванием или используйте панель инструментов выше." rows="20"></textarea>
+            </div>
+
+            <!-- Word count -->
+            <div class="fade-up mt-6 flex items-center justify-between text-white/30" style="animation-delay: 0.25s;">
+                <span class="mono text-xs" id="word-count">0 слов</span>
+                <span class="mono text-xs">Автосохранение включено</span>
+            </div>
+        </form>
+    </div>
+</main>
+
+<!-- Settings Sidebar Toggle -->
+<button
+    class="fixed right-6 bottom-6 z-20 w-12 h-12 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white/60 hover:bg-white/15 hover:text-white transition-all shadow-lg">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+    </svg>
+</button>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Word count
+    const textarea = document.getElementById('editor');
+    const wordCountEl = document.getElementById('word-count');
+
+    if (textarea && wordCountEl) {
+        textarea.addEventListener('input', () => {
+            const words = textarea.value.trim().split(/\s+/).filter(w => w.length > 0).length;
+            wordCountEl.textContent = words + ' слов';
+
+            // Auto-resize
+            textarea.style.height = 'auto';
+            textarea.style.height = textarea.scrollHeight + 'px';
+        });
+    }
+</script>
+{% endblock %}

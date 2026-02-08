@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Blog / Dev Notes{% endblock %}
+
+{% block meta %}
+<meta name="description" content="Dev Notes — статьи об инженерии, инструментах и продуктовом мышлении." />
+{% endblock %}
+
+{% block header %}
+{% include "includes/header_main.html" with active_nav="latest" %}
+{% endblock %}
+
+{% block content %}
+<!-- Hero / Featured -->
+<section class="mx-auto w-full max-w-5xl px-6 pb-10 pt-6">
+    <div class="grid gap-6 xl:grid-cols-12">
+        <article class="fade-up rounded-3xl border border-white/10 bg-white/5 xl:col-span-8 overflow-hidden">
+            {% if featured and featured.image %}
+            <!-- Split layout: text + image -->
+            <div class="flex flex-col md:flex-row h-full">
+                <div class="flex-1 p-7 flex flex-col">
+                    <p class="mono text-xs uppercase tracking-[0.35em] text-white/50">Избранное</p>
+                    <h1 class="mt-4 text-2xl font-semibold leading-tight sm:text-4xl">
+                        {{ featured.title }}
+                    </h1>
+                    <p class="mt-4 text-base text-white/70">
+                        {{ featured.content|truncatewords:20 }}
+                    </p>
+                    <div class="mt-5 flex flex-wrap items-center gap-3">
+                        {% if featured.category %}
+                        <span class="mono rounded-full border border-white/10 px-3 py-1 text-[11px] uppercase tracking-[0.25em]">{{ featured.category.name }}</span>
+                        {% endif %}
+                        <span class="mono text-xs text-white/40 uppercase tracking-[0.3em]">{{ featured.created_at|date:"M d, Y" }}</span>
+                    </div>
+                    <div class="mt-auto pt-6 flex flex-wrap items-center gap-3">
+                        <a href="{% url 'blog:article_detail' featured.slug %}"
+                            class="mono rounded-lg border border-emerald-200/30 bg-emerald-200/10 px-5 py-3 text-[11px] uppercase tracking-[0.35em] text-emerald-100 shadow-[0_12px_30px_rgba(119,242,193,0.12)] hover:border-emerald-200/50 hover:bg-emerald-200/15 transition-all">
+                            Читать
+                        </a>
+                    </div>
+                </div>
+                <div class="md:w-[45%] shrink-0">
+                    <img src="{{ featured.image.url }}" alt="{{ featured.title }}"
+                        class="w-full h-full object-cover" loading="lazy" />
+                </div>
+            </div>
+            {% elif featured %}
+            <!-- Text only -->
+            <div class="p-7 flex flex-col h-full">
+                <p class="mono text-xs uppercase tracking-[0.35em] text-white/50">Избранное</p>
+                <h1 class="mt-4 text-3xl font-semibold leading-tight sm:text-5xl">
+                    {{ featured.title }}
+                </h1>
+                <p class="mt-5 max-w-2xl text-base text-white/70 sm:text-lg">
+                    {{ featured.content|truncatewords:25 }}
+                </p>
+                <div class="mt-6 flex flex-wrap items-center gap-3">
+                    {% if featured.category %}
+                    <span class="mono rounded-full border border-white/10 px-3 py-1 text-[11px] uppercase tracking-[0.25em]">{{ featured.category.name }}</span>
+                    {% endif %}
+                    <span class="mono text-xs text-white/40 uppercase tracking-[0.3em]">{{ featured.created_at|date:"M d, Y" }}</span>
+                </div>
+                <div class="mt-auto pt-7 flex flex-wrap items-center gap-3">
+                    <a href="{% url 'blog:article_detail' featured.slug %}"
+                        class="mono rounded-lg border border-emerald-200/30 bg-emerald-200/10 px-5 py-3 text-[11px] uppercase tracking-[0.35em] text-emerald-100 shadow-[0_12px_30px_rgba(119,242,193,0.12)] hover:border-emerald-200/50 hover:bg-emerald-200/15 transition-all">
+                        Читать
+                    </a>
+                </div>
+            </div>
+            {% else %}
+            <div class="p-7">
+                <p class="mono text-xs uppercase tracking-[0.35em] text-white/50">Избранное</p>
+                <h1 class="mt-4 text-3xl font-semibold leading-tight sm:text-5xl">
+                    Маленькие шаги, глубокие мысли.
+                </h1>
+                <p class="mt-5 max-w-2xl text-base text-white/70 sm:text-lg">
+                    Плейбук для быстрых итераций: измеряй, сокращай скоуп, выпускай и рефлексируй перед следующим циклом.
+                </p>
+            </div>
+            {% endif %}
+        </article>
+
+        <!-- Sidebar: О блоге -->
+        <aside class="fade-up delay-1 rounded-3xl border border-white/10 bg-white/5 p-7 xl:col-span-4 flex flex-col">
+            <p class="mono text-xs uppercase tracking-[0.35em] text-white/50">О блоге</p>
+            <div class="mt-5 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-blue-500 flex items-center justify-center text-white font-medium text-sm shrink-0">
+                    D
+                </div>
+                <div>
+                    <p class="font-medium text-sm">Dev / Blog</p>
+                    <p class="text-xs text-white/50">Заметки разработчика</p>
+                </div>
+            </div>
+            <p class="mt-5 text-sm text-white/60 leading-relaxed">
+                Пространство для тихого фокуса. Статьи об инженерии, инструментах и продуктовом мышлении — без лент и шума.
+            </p>
+            <div class="mt-auto pt-6 flex flex-col gap-3">
+                <a href="{% url 'blog:article_list' %}"
+                    class="mono flex items-center justify-between rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-xs uppercase tracking-[0.25em] text-white/70 hover:border-white/20 hover:bg-white/10 hover:text-white transition-all">
+                    <span>Все статьи</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </a>
+            </div>
+        </aside>
+    </div>
+</section>
+
+<!-- Статистика -->
+<section class="mx-auto w-full max-w-5xl px-6 pb-10">
+    <div class="grid gap-4 grid-cols-3">
+        <div class="fade-up rounded-2xl border border-white/10 bg-white/5 p-6 text-center">
+            <p class="mono text-4xl sm:text-5xl font-semibold text-white">{{ total_articles|default:"0" }}</p>
+            <p class="mt-2 mono text-xs uppercase tracking-[0.3em] text-white/50">Постов</p>
+            <p class="mt-1 text-sm text-white/40 hidden sm:block">Опубликовано статей</p>
+        </div>
+        <div class="fade-up delay-1 rounded-2xl border border-white/10 bg-white/5 p-6 text-center">
+            <p class="mono text-4xl sm:text-5xl font-semibold text-white">{{ total_categories|default:"0" }}</p>
+            <p class="mt-2 mono text-xs uppercase tracking-[0.3em] text-white/50">Категорий</p>
+            <p class="mt-1 text-sm text-white/40 hidden sm:block">Тем для изучения</p>
+        </div>
+        <div class="fade-up delay-2 rounded-2xl border border-white/10 bg-white/5 p-6 text-center">
+            <p class="mono text-4xl sm:text-5xl font-semibold text-white">{{ total_authors|default:"0" }}</p>
+            <p class="mt-2 mono text-xs uppercase tracking-[0.3em] text-white/50">Авторов</p>
+            <p class="mt-1 text-sm text-white/40 hidden sm:block">Участников блога</p>
+        </div>
+    </div>
+</section>
+
+<!-- Новые посты -->
+<section id="latest" class="mx-auto w-full max-w-5xl px-6 pb-12">
+    <div class="flex items-center justify-between">
+        <h2 class="text-xl font-semibold">Новые посты</h2>
+        <a href="{% url 'blog:article_list' %}"
+            class="mono text-xs uppercase tracking-[0.3em] text-white/50 hover:text-white transition-colors">Все статьи →</a>
+    </div>
+
+    <div class="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        {% for article in articles %}
+        {% include "includes/article_card.html" with animation_class="fade-up delay-"|add:forloop.counter|default:"fade-up" %}
+        {% empty %}
+        <div class="col-span-full text-center py-12">
+            <svg class="w-12 h-12 mx-auto text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+            </svg>
+            <p class="mt-4 mono text-sm uppercase tracking-[0.3em] text-white/40">Пока нет статей</p>
+            <p class="mt-2 text-sm text-white/30">Первая статья скоро появится</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if articles %}
+    <!-- Link to all articles -->
+    <div class="mt-8 text-center">
+        <a href="{% url 'blog:article_list' %}"
+            class="inline-flex items-center gap-2 mono rounded-lg border border-white/20 bg-white/5 px-6 py-3 text-xs uppercase tracking-[0.3em] text-white/70 hover:border-white/40 hover:bg-white/10 hover:text-white transition-all">
+            Перейти ко всем статьям
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+        </a>
+    </div>
+    {% endif %}
+</section>
+
+<!-- Подписка -->
+<section id="topics" class="mx-auto w-full max-w-5xl px-6 pb-16">
+    <div class="rounded-2xl border border-white/10 bg-white/5 p-6 sm:p-8">
+        <div class="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <h3 class="text-xl font-semibold">Подпишитесь на dev notes</h3>
+                <p class="mt-1 text-sm text-white/60">Еженедельные инсайты об инженерии и продуктах.</p>
+            </div>
+            <form id="subscribe-form" class="flex gap-3">
+                <input type="email" placeholder="you@example.com" required
+                    class="mono w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/40 focus:border-white/30 focus:outline-none sm:w-64" />
+                <button type="submit"
+                    class="mono rounded-lg border border-emerald-200/30 bg-emerald-200/10 px-5 py-3 text-xs uppercase tracking-[0.3em] text-emerald-100 hover:border-emerald-200/50 hover:bg-emerald-200/15 transition-all whitespace-nowrap">
+                    Подписаться
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block footer %}
+{% include "includes/footer.html" %}
+{% endblock %}

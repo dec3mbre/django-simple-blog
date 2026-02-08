@@ -1,0 +1,374 @@
+/* ==========================================================================
+   Dev/Blog - Unified Stylesheet
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Variables & Configuration
+   -------------------------------------------------------------------------- */
+:root {
+    --bg-1: #0f1115;
+    --bg-2: #131a23;
+    --ink: #e6e9ef;
+    --accent: #77f2c1;
+
+    --font-sans: "Space Grotesk", system-ui, -apple-system, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+/* --------------------------------------------------------------------------
+   2. Base Styles
+   -------------------------------------------------------------------------- */
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-sans);
+    background:
+        radial-gradient(80rem 80rem at 20% 10%, rgba(119, 242, 193, 0.08), transparent 60%),
+        radial-gradient(60rem 60rem at 90% 20%, rgba(120, 167, 255, 0.08), transparent 55%),
+        linear-gradient(135deg, var(--bg-1), var(--bg-2));
+    background-color: var(--bg-1);
+    /* Fallback */
+    color: var(--ink);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+}
+
+body.page-auth {
+    background:
+        radial-gradient(80rem 80rem at 50% 0%, rgba(119, 242, 193, 0.1), transparent 60%),
+        radial-gradient(60rem 60rem at 80% 50%, rgba(120, 167, 255, 0.08), transparent 55%),
+        linear-gradient(135deg, var(--bg-1), var(--bg-2));
+}
+
+/* --------------------------------------------------------------------------
+   3. Utilities & Helpers
+   -------------------------------------------------------------------------- */
+.mono {
+    font-family: var(--font-mono);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+::selection {
+    background: rgba(119, 242, 193, 0.3);
+    color: #fff;
+}
+
+/* --------------------------------------------------------------------------
+   4. Components
+   -------------------------------------------------------------------------- */
+
+/* Grid Overlay */
+.grid-overlay::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 32px 32px;
+    mask-image: radial-gradient(60% 60% at 20% 20%, #000, transparent 70%);
+    pointer-events: none;
+}
+
+/* Article Card */
+.article-card {
+    transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.article-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(119, 242, 193, 0.06);
+}
+
+.article-card.hidden {
+    opacity: 0;
+    transform: scale(0.95);
+    pointer-events: none;
+    position: absolute;
+    visibility: hidden;
+    /* Added visibility for better a11y hiding */
+}
+
+/* Tag Filters */
+.tag-filter.active {
+    background: rgba(119, 242, 193, 0.15);
+    border-color: rgba(119, 242, 193, 0.4);
+    color: var(--accent);
+}
+
+/* Tab Navigation */
+.tab-btn.active {
+    border-color: var(--accent);
+    color: #fff;
+}
+
+.tab-content.hidden {
+    display: none;
+}
+
+/* Forms */
+:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+}
+
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--ink);
+    -webkit-box-shadow: 0 0 0px 1000px var(--bg-1) inset;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+/* --------------------------------------------------------------------------
+   5. Editor
+   -------------------------------------------------------------------------- */
+.editor-toolbar button.active {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+#editor:focus {
+    border-color: rgba(119, 242, 193, 0.4);
+}
+
+.editor-content {
+    min-height: 400px;
+    line-height: 1.8;
+}
+
+.editor-content::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+/* --------------------------------------------------------------------------
+   6. Typography / Prose
+   -------------------------------------------------------------------------- */
+.prose h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.prose h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+}
+
+.prose p {
+    margin-bottom: 1.25rem;
+    line-height: 1.8;
+    color: rgba(230, 233, 239, 0.88);
+}
+
+.prose ul,
+.prose ol {
+    margin-bottom: 1.25rem;
+    padding-left: 1.5rem;
+    color: rgba(230, 233, 239, 0.88);
+}
+
+.prose li {
+    margin-bottom: 0.5rem;
+    line-height: 1.7;
+}
+
+.prose blockquote {
+    border-left: 3px solid var(--accent);
+    padding-left: 1.25rem;
+    margin: 1.5rem 0;
+    color: rgba(230, 233, 239, 0.7);
+    font-style: italic;
+}
+
+.prose a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.prose a:hover {
+    opacity: 0.8;
+}
+
+/* Code Blocks */
+.prose code {
+    font-family: var(--font-mono);
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.2em 0.4em;
+    border-radius: 0.25rem;
+    font-size: 0.9em;
+}
+
+.prose pre {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    overflow-x: auto;
+    margin-bottom: 1.5rem;
+}
+
+.prose pre code {
+    background: none;
+    padding: 0;
+}
+
+/* --------------------------------------------------------------------------
+   7. Animations
+   -------------------------------------------------------------------------- */
+@keyframes fade-up {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes page-enter {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+main {
+    animation: page-enter 0.3s ease-out;
+}
+
+.fade-up {
+    animation: fade-up 0.6s ease-out both;
+}
+
+.fade-up.delay-1 {
+    animation-delay: 0.08s;
+}
+
+.fade-up.delay-2 {
+    animation-delay: 0.16s;
+}
+
+.fade-up.delay-3 {
+    animation-delay: 0.24s;
+}
+
+/* --------------------------------------------------------------------------
+   8. Media Queries
+   -------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+    .grid-overlay::before {
+        background-size: 24px 24px;
+    }
+
+    .prose p,
+    .prose li {
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+
+    .prose h2 {
+        font-size: 1.25rem;
+        margin-top: 2rem;
+    }
+
+    .prose h3 {
+        font-size: 1.1rem;
+    }
+
+    /* Common container padding overrides if needed */
+    .container,
+    .max-w-5xl,
+    .max-w-4xl {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+
+    /* Prevent iOS zoom */
+    input,
+    select,
+    textarea {
+        font-size: 16px !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   9. Accessibility
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    .fade-up {
+        animation: none;
+        opacity: 1;
+        transform: none;
+    }
+
+    main {
+        animation: none;
+    }
+
+    .article-card {
+        transition: none;
+    }
+
+    .article-card:hover {
+        transform: none;
+    }
+
+    *,
+    *::before,
+    *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+    }
+}
