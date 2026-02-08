@@ -50,3 +50,23 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return f'Профиль {self.user.username}'
+
+
+class Subscriber(models.Model):
+    """Подписчик на рассылку."""
+    email = models.EmailField(
+        verbose_name='Email',
+        unique=True,
+    )
+    created_at = models.DateTimeField(
+        verbose_name='Дата подписки',
+        auto_now_add=True,
+    )
+
+    class Meta:
+        verbose_name = 'Подписчик'
+        verbose_name_plural = 'Подписчики'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.email

@@ -159,24 +159,48 @@ function initShareButton() {
 
 /**
  * Subscribe Form
- * Provides visual feedback on submission
+ * Sends email to backend via fetch and provides visual feedback
  */
 function initSubscribeForm() {
     const form = document.getElementById('subscribe-form');
     if (!form) return;
 
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const btn = form.querySelector('button[type="submit"]');
+        const emailInput = form.querySelector('input[name="email"]');
         const originalText = btn.textContent;
-        btn.textContent = 'Готово ✓';
-        btn.classList.add('border-emerald-400/50', 'text-emerald-200');
+        const csrfToken = form.querySelector('[name=csrfmiddlewaretoken]');
+
         btn.disabled = true;
-        setTimeout(() => {
-            btn.textContent = originalText;
-            btn.classList.remove('border-emerald-400/50', 'text-emerald-200');
-            btn.disabled = false;
-            form.reset();
-        }, 2500);
+        btn.textContent = 'Отправка...';
+
+        try {
+            const formData = new FormData();
+            formData.append('email', emailInput.value);
+            if (csrfToken) formData.append('csrfmiddlewaretoken', csrfToken.value);
+
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: formData,
+            });
+            const data = await response.json();
+
+            btn.textContent = data.ok ? 'Готово ✓' : data.error || 'Ошибка';
+            btn.classList.add('border-emerald-400/50', 'text-emerald-200');
+
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.classList.remove('border-emerald-400/50', 'text-emerald-200');
+                btn.disabled = false;
+                if (data.ok) form.reset();
+            }, 2500);
+        } catch {
+            btn.textContent = 'Ошибка сети';
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }, 2500);
+        }
     });
 }

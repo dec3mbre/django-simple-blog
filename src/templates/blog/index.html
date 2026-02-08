@@ -176,13 +176,16 @@
                 <h3 class="text-xl font-semibold">Подпишитесь на dev notes</h3>
                 <p class="mt-1 text-sm text-white/60">Еженедельные инсайты об инженерии и продуктах.</p>
             </div>
-            <form id="subscribe-form" class="flex gap-3">
-                <input type="email" placeholder="you@example.com" required
+            <form id="subscribe-form" method="post" action="{% url 'blog:subscribe' %}">
+                {% csrf_token %}
+                <div class="flex gap-3">
+                <input type="email" name="email" placeholder="you@example.com" required
                     class="mono w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/40 focus:border-white/30 focus:outline-none sm:w-64" />
                 <button type="submit"
                     class="mono rounded-lg border border-emerald-200/30 bg-emerald-200/10 px-5 py-3 text-xs uppercase tracking-[0.3em] text-emerald-100 hover:border-emerald-200/50 hover:bg-emerald-200/15 transition-all whitespace-nowrap">
                     Подписаться
                 </button>
+                </div>
             </form>
         </div>
     </div>
