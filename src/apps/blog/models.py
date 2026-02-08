@@ -1,6 +1,6 @@
-from enum import unique
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.urls import reverse
 from apps.core.models import TimeStampedModel
 
 
@@ -68,6 +68,12 @@ class Article(TimeStampedModel):
         null=True,
         blank=True
     )
+    description = models.TextField(
+        verbose_name='Описание',
+        blank=True,
+        default='',
+        help_text='Краткое описание статьи для превью',
+    )
     content = models.TextField(
         verbose_name='Статья'
     )
@@ -77,3 +83,9 @@ class Article(TimeStampedModel):
         choices=Status.choices,
         default=Status.DRAFT
     )
+
+    def __str__(self):
+        return self.title
+
+    def get_absolute_url(self):
+        return reverse('blog:article_detail', kwargs={'slug': self.slug})

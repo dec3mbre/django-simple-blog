@@ -34,7 +34,7 @@
             </div>
             {% endif %}
 
-            <form class="mt-8 space-y-5" method="post" action="#">
+            <form class="mt-8 space-y-5" method="post" action="{% url 'accounts:signup' %}">
                 {% csrf_token %}
                 <div>
                     <label class="block mono text-xs uppercase tracking-[0.2em] text-white/50 mb-2">Имя</label>
@@ -73,7 +73,7 @@
 
             <!-- Login link -->
             <p class="mt-8 text-center text-sm text-white/50">
-                Уже есть аккаунт? <a href="#"
+                Уже есть аккаунт? <a href="{% url 'accounts:login' %}"
                     class="text-emerald-300 hover:text-emerald-200 transition-colors">Войти</a>
             </p>
         </div>

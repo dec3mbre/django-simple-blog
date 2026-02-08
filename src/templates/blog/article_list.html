@@ -30,17 +30,15 @@
 
     <!-- Tag Filters -->
     <div class="fade-up mt-6 flex overflow-x-auto pb-2 no-scrollbar gap-2" id="tag-filters">
-        <button
-            class="tag-filter active mono rounded-full border border-white/20 px-4 py-2 text-xs uppercase tracking-[0.25em] text-white/70 hover:border-white/40 transition-all whitespace-nowrap"
-            data-tag="all">
+        <a href="{% url 'blog:article_list' %}{% if search_query %}?q={{ search_query }}{% endif %}"
+            class="tag-filter mono rounded-full border px-4 py-2 text-xs uppercase tracking-[0.25em] transition-all whitespace-nowrap {% if not current_category %}border-white/20 text-white/70 active{% else %}border-white/10 text-white/50 hover:border-white/30 hover:text-white/70{% endif %}">
             Все
-        </button>
+        </a>
         {% for category in categories %}
-        <button
-            class="tag-filter mono rounded-full border border-white/10 px-4 py-2 text-xs uppercase tracking-[0.25em] text-white/50 hover:border-white/30 hover:text-white/70 transition-all whitespace-nowrap"
-            data-tag="{{ category.slug }}">
+        <a href="{% url 'blog:article_list' %}?category={{ category.slug }}{% if search_query %}&q={{ search_query }}{% endif %}"
+            class="tag-filter mono rounded-full border px-4 py-2 text-xs uppercase tracking-[0.25em] transition-all whitespace-nowrap {% if current_category == category.slug %}border-white/20 text-white/70 active{% else %}border-white/10 text-white/50 hover:border-white/30 hover:text-white/70{% endif %}">
             {{ category.name }}
-        </button>
+        </a>
         {% endfor %}
     </div>
 

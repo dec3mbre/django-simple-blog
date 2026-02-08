@@ -6,11 +6,22 @@
 {% block grid_overlay %}{% endblock %}
 
 {% block header %}
-{% include "includes/header_back.html" with back_url="/" back_text="На главную" right_text="Выйти" right_url="#" %}
+{% include "includes/header_back.html" with back_url="/" back_text="На главную" right_text="Выйти" right_url="/accounts/logout/" %}
 {% endblock %}
 
 {% block content %}
 <section class="mx-auto w-full max-w-4xl px-6 pb-16">
+    <!-- Messages -->
+    {% if messages %}
+    <div class="mb-6 space-y-2">
+        {% for message in messages %}
+        <div class="rounded-lg border p-4 text-sm {% if message.tags == 'error' %}border-red-500/30 bg-red-500/10 text-red-300{% else %}border-emerald-500/30 bg-emerald-500/10 text-emerald-300{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
     <!-- Profile Header -->
     <div class="fade-up flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left sm:gap-8">
         <div class="relative">
@@ -22,7 +33,7 @@
         <div class="mt-4 sm:mt-0">
             <h1 class="text-3xl font-semibold">{{ user.get_full_name|default:user.username }}</h1>
             <p class="mt-1 text-white/50">{{ user.email }}</p>
-            <p class="mt-3 text-white/70 max-w-md">Разработчик и автор.</p>
+            <p class="mt-3 text-white/70 max-w-md">{{ profile.bio|default:"Разработчик и автор." }}</p>
         </div>
     </div>
 
@@ -118,7 +129,7 @@
 
     <!-- Tab Content: Settings -->
     <div class="tab-content hidden" id="tab-settings">
-        <form class="mt-8 space-y-8" method="post" action="#">
+        <form class="mt-8 space-y-8" method="post" action="{% url 'accounts:profile' %}">
             {% csrf_token %}
             <!-- Basic Info -->
             <div class="rounded-2xl border border-white/10 bg-white/5 p-6">
@@ -126,18 +137,18 @@
                 <div class="mt-6 space-y-5">
                     <div>
                         <label class="block mono text-xs uppercase tracking-[0.2em] text-white/50 mb-2">Имя</label>
-                        <input type="text" name="first_name" value="{{ user.first_name }}"
+                        <input type="text" name="first_name" value="{{ form.first_name.value|default_if_none:'' }}"
                             class="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-emerald-300/50 focus:outline-none transition-colors" />
                     </div>
                     <div>
                         <label class="block mono text-xs uppercase tracking-[0.2em] text-white/50 mb-2">Био</label>
                         <textarea rows="3" name="bio"
                             class="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-emerald-300/50 focus:outline-none transition-colors resize-none"
-                            placeholder="Расскажите о себе"></textarea>
+                            placeholder="Расскажите о себе">{{ form.bio.value|default_if_none:'' }}</textarea>
                     </div>
                     <div>
                         <label class="block mono text-xs uppercase tracking-[0.2em] text-white/50 mb-2">Email</label>
-                        <input type="email" name="email" value="{{ user.email }}"
+                        <input type="email" name="email" value="{{ form.email.value|default_if_none:'' }}"
                             class="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-white focus:border-emerald-300/50 focus:outline-none transition-colors" />
                     </div>
                 </div>
@@ -152,7 +163,7 @@
                         <div class="flex">
                             <span
                                 class="flex items-center rounded-l-lg border border-r-0 border-white/10 bg-white/[0.03] px-4 text-white/40">github.com/</span>
-                            <input type="text" name="github" placeholder="username"
+                            <input type="text" name="github" value="{{ form.github.value|default_if_none:'' }}" placeholder="username"
                                 class="flex-1 rounded-r-lg border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:border-emerald-300/50 focus:outline-none transition-colors" />
                         </div>
                     </div>
@@ -161,13 +172,13 @@
                         <div class="flex">
                             <span
                                 class="flex items-center rounded-l-lg border border-r-0 border-white/10 bg-white/[0.03] px-4 text-white/40">twitter.com/</span>
-                            <input type="text" name="twitter" placeholder="username"
+                            <input type="text" name="twitter" value="{{ form.twitter.value|default_if_none:'' }}" placeholder="username"
                                 class="flex-1 rounded-r-lg border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:border-emerald-300/50 focus:outline-none transition-colors" />
                         </div>
                     </div>
                     <div>
                         <label class="block mono text-xs uppercase tracking-[0.2em] text-white/50 mb-2">Сайт</label>
-                        <input type="url" name="website" placeholder="https://yoursite.com"
+                        <input type="url" name="website" value="{{ form.website.value|default_if_none:'' }}" placeholder="https://yoursite.com"
                             class="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-white/30 focus:border-emerald-300/50 focus:outline-none transition-colors" />
                     </div>
                 </div>

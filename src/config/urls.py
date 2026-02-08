@@ -6,6 +6,9 @@ from django.urls import path, include
 urlpatterns = [
     path("admin/", admin.site.urls),
     
+    # Аккаунты
+    path("accounts/", include("apps.accounts.urls")),
+    
     # Публичный блог — на главной странице
     path("", include("apps.blog.urls")),
 ]

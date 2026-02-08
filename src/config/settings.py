@@ -26,7 +26,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     
     "apps.core",
-    "apps.blog"
+    "apps.blog",
+    "apps.accounts",
 ]
 
 MIDDLEWARE = [
@@ -115,3 +116,8 @@ MEDIA_ROOT = BASE_DIR / "src" / "media"
 # Default primary key field type
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Auth
+LOGIN_URL = "/accounts/login/"
+LOGIN_REDIRECT_URL = "/accounts/profile/"
+LOGOUT_REDIRECT_URL = "/"

@@ -1,4 +1,7 @@
 from django.db import models
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class TimeStampedModel(models.Model):
@@ -9,3 +12,41 @@ class TimeStampedModel(models.Model):
     class Meta:
         abstract = True  # Django не создаст таблицу для этой модели, это только "чертеж"
 
+
+class UserProfile(models.Model):
+    """Профиль пользователя с дополнительной информацией."""
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name='profile',
+        verbose_name='Пользователь',
+    )
+    bio = models.TextField(
+        verbose_name='О себе',
+        blank=True,
+        default='',
+    )
+    github = models.CharField(
+        verbose_name='GitHub',
+        max_length=100,
+        blank=True,
+        default='',
+    )
+    twitter = models.CharField(
+        verbose_name='Twitter',
+        max_length=100,
+        blank=True,
+        default='',
+    )
+    website = models.URLField(
+        verbose_name='Сайт',
+        blank=True,
+        default='',
+    )
+
+    class Meta:
+        verbose_name = 'Профиль'
+        verbose_name_plural = 'Профили'
+
+    def __str__(self):
+        return f'Профиль {self.user.username}'

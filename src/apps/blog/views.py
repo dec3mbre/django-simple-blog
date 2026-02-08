@@ -1,6 +1,11 @@
+import math
+
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator
-import math
+from django.views.decorators.http import require_POST
+
+from apps.core.models import Subscriber
 from .models import Article, Category
 
 
@@ -36,15 +41,17 @@ def index(request):
 def article_list(request):
     """Все статьи с поиском и фильтрацией по категориям."""
     query = request.GET.get('q', '')
+    category_slug = request.GET.get('category', '')
+
+    articles = Article.objects.filter(
+        status=Article.Status.PUBLISHED
+    ).order_by('-created_at')
+
     if query:
-        articles = Article.objects.filter(
-            status=Article.Status.PUBLISHED,
-            title__icontains=query
-        ).order_by('-created_at')
-    else:
-        articles = Article.objects.filter(
-            status=Article.Status.PUBLISHED
-        ).order_by('-created_at')
+        articles = articles.filter(title__icontains=query)
+
+    if category_slug:
+        articles = articles.filter(category__slug=category_slug)
 
     categories = Category.objects.all()
 
@@ -60,6 +67,8 @@ def article_list(request):
         'articles': page_obj,
         'page_obj': page_obj,
         'categories': categories,
+        'current_category': category_slug,
+        'search_query': query,
     })
 
 
@@ -80,3 +89,16 @@ def article_detail(request, slug):
         'article': article,
         'related_articles': related_articles,
     })
+
+
+@require_POST
+def subscribe(request):
+    """Подписка на рассылку (AJAX)."""
+    email = request.POST.get('email', '').strip()
+    if not email:
+        return JsonResponse({'ok': False, 'error': 'Email обязателен.'}, status=400)
+
+    _, created = Subscriber.objects.get_or_create(email=email)
+    if created:
+        return JsonResponse({'ok': True, 'message': 'Вы успешно подписались!'})
+    return JsonResponse({'ok': True, 'message': 'Вы уже подписаны.'})
